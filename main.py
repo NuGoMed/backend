@@ -6,6 +6,8 @@ app = FastAPI()
 origins = [
     "http://localhost:3000",
     "localhost:3000",
+    "https://nugomed.com:3000",
+    "http://nugomed.com"
 ]
 
 
@@ -17,6 +19,6 @@ app.add_middleware(
     allow_headers=["*"]
 )
 
-@app.get("/helloworld")
-async def root():
+@app.get("/helloworld2")
+async def main():
     return {"message":"Hello World"}
