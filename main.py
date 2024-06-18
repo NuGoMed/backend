@@ -15,7 +15,10 @@ origins = [
     "http://localhost:3000",
     "localhost:3000",
     "https://nugomed.com:3000",
-    "http://nugomed.com"
+    "http://nugomed.com",
+    "https://nugomed.com",
+    "http://www.nugomed.com",
+    "https://www.nugomed.com",
 ]
 
 

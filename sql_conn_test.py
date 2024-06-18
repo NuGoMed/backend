@@ -63,6 +63,8 @@ async def get_surgery_test():
         surgery_id = 1
         surgery = await db.execute(select(models.Surgeries).filter(models.Surgeries.id == surgery_id))
         surgery = surgery.scalars().first()
+        
+        print("debug")
 
         if surgery is None:
             print("No surgery listed")
@@ -72,6 +74,6 @@ async def get_surgery_test():
 
         print(f"Surgery name: {surgery.surgery}, Surgery description: {surgery.surgery_description}")
 
-        db.close()
+        await db.close()
 
 asyncio.run(get_surgery_test())
