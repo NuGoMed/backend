@@ -1,13 +1,24 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sql_app.database import SessionLocal
 
 app = FastAPI()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 origins = [
     "http://localhost:3000",
     "localhost:3000",
     "https://nugomed.com:3000",
-    "http://nugomed.com"
+    "http://nugomed.com",
+    "https://nugomed.com",
+    "http://www.nugomed.com",
+    "https://www.nugomed.com",
 ]
 
 
