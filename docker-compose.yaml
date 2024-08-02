@@ -1,16 +1,39 @@
 version: '3'
+name: nugomed-app
 services:
-  # postgres:
-  #   image: postgres:latest
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-  #     - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the initialization script
-
-  nugo-backend:
-    image: nugomed/backend:1.4
+  postgres:
+    image: postgres:latest
+    container_name: bd-nugomed
+    environment:
+      - POSTGRES_PASSWORD=postgres123
+      - POSTGRES_USER=admin
+      - POSTGRES_DB=bd
     ports:
-      - "8080:80"
+      - "5433:5432"
+    networks:
+      - nugomed-app
+    volumes:
+      - "D:/nugomeddata/Data/db:/var/lib/postgresql/data"
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the initialization script
+
+  #nugo-backend:
+  # image: nugomed/backend:1.4
+  #ports:
+  #    - "8080:80"
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 8220025@estg.ipp.pt
+      PGADMIN_DEFAULT_PASSWORD: pgadmin123
+    networks:
+      - nugomed-app
+    ports:
+      - "9999:80"
+
+networks:
+  nugomed-app:
+
 volumes:
-  pgdata:
+  db-volume:
