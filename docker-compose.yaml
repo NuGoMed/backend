@@ -14,7 +14,7 @@ services:
       - nugomed-app
     volumes:
       - "D:/nugomeddata/Data/db:/var/lib/postgresql/data"
-      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the initialization script
+      - "D:/backend/app/sql/init.sql:/docker-entrypoint-initdb.d/init.sql"  # Mount the initialization script
 
   #nugo-backend:
   # image: nugomed/backend:1.4

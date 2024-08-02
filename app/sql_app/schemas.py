@@ -29,6 +29,53 @@ class Book(BookSchema):
     class Config:
         orm_mode = True
 
+class SurgeryBase(BaseModel):
+    surgery: str
+    surgery_description: str
+
+class SurgeryCreate(SurgeryBase):
+    pass
+
+class Surgery(SurgeryBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class TierListBase(BaseModel):
+    tier: str
+    surgery_id: int
+    visa_sponsorship: str
+    flight_type: str
+    number_family_members: str
+    hospital_accomodations: str
+    hotel: str
+    duration_stay: str
+    tourism_package: str
+    post_surgery_monitoring: str
+    price: str
+
+class TierList(BaseModel):
+    tier: str
+    surgery_id: int
+    visa_sponsorship: str
+    flight_type: str
+    number_family_members: str
+    hospital_accomodations: str
+    hotel: str
+    duration_stay: str
+    tourism_package: str
+    post_surgery_monitoring: str
+    price: str
+
+class TierListResponse(BaseModel):
+    status: str
+    code: str
+    message: str
+    result: int
+    data: List[TierList]
+
 
 class Request(GenericModel, Generic[T]):
     parameter: Optional[T] = Field(...)
