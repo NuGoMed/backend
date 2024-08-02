@@ -1,8 +1,60 @@
 from sqlalchemy.orm import Session
-from . import models,schemas
+from .models import Book, Email, Surgery, TierList
+from .schemas import BookSchema, EmailSchema
 
-def get_surgery(db: Session ,surgery_id: int):
-    db.query(models.Surgeries).filter(models.Surgeries.id == surgery_id)
+def create_email(db: Session, email: EmailSchema) -> Email:
+    db_email = Email(
+        mail_from=email.mail_from,
+        mail_to=email.mail_to,
+        subject=email.subject,
+        message=email.message
+    )
+    db.add(db_email)
+    db.commit()
+    db.refresh(db_email)
+    return db_email
 
-def get_tiers_by_surgery(db: Session, surgery_id: int):
-    db.query(models.Tiers).filter(models.Tiers.surgery_id == surgery_id)
+async def get_email_by_id(db: Session, email_id: int) -> Email:
+    return db.query(Email).filter(Email.id == email_id).first()
+
+
+def get_book(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Book).offset(skip).limit(limit).all()
+
+def get_book_by_id(db: Session, book_id: int):
+    return db.query(Book).filter(Book.id == book_id).first()
+
+def get_surgeries(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Surgery).offset(skip).limit(limit).all()
+
+def get_tier_lists(db: Session, skip: int = 0, limit: int = 100):
+    try:
+        tier_lists = db.query(TierList).offset(skip).limit(limit).all()
+        print(type(tier_lists[0]))
+        return tier_lists
+    except Exception as e:
+        raise e
+
+def create_book(db: Session, book: BookSchema):
+    _book = Book(title=book.title, description=book.description)
+    db.add(_book)
+    db.commit()
+    db.refresh(_book)
+    return _book
+
+
+def remove_book(db: Session, book_id: int):
+    _book = get_book_by_id(db=db, book_id=book_id)
+    db.delete(_book)
+    db.commit()
+
+
+def update_book(db: Session, book_id: int, title: str, description: str):
+    _book = get_book_by_id(db=db, book_id=book_id)
+
+    _book.title = title
+    _book.description = description
+
+    db.commit()
+    db.refresh(_book)
+    return _book
