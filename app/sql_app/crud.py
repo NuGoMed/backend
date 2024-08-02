@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from .models import Book, Email
+from .models import Book, Email, Surgery, TierList
 from .schemas import BookSchema, EmailSchema
 
 def create_email(db: Session, email: EmailSchema) -> Email:
@@ -23,6 +23,17 @@ def get_book(db: Session, skip: int = 0, limit: int = 100):
 
 def get_book_by_id(db: Session, book_id: int):
     return db.query(Book).filter(Book.id == book_id).first()
+
+def get_surgeries(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Surgery).offset(skip).limit(limit).all()
+
+def get_tier_lists(db: Session, skip: int = 0, limit: int = 100):
+    try:
+        tier_lists = db.query(TierList).offset(skip).limit(limit).all()
+        print(type(tier_lists[0]))
+        return tier_lists
+    except Exception as e:
+        raise e
 
 def create_book(db: Session, book: BookSchema):
     _book = Book(title=book.title, description=book.description)

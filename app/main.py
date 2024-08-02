@@ -6,6 +6,8 @@ from sqlalchemy.future import select
 from dotenv import load_dotenv
 from sql_app import models, crud, schemas, database
 from email.message import EmailMessage
+from fastapi.middleware.cors import CORSMiddleware
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -22,6 +24,25 @@ def get_db():
         yield db
     finally:
         db.close()
+
+origins = [
+    "http://localhost:3000",
+    "localhost:3000",
+    "https://nugomed.com:3000",
+    "http://nugomed.com",
+    "https://nugomed.com",
+    "http://www.nugomed.com",
+    "https://www.nugomed.com"
+]
+
+
+app.add_middleware(
+CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 @app.get("/")
 async def main():
@@ -102,3 +123,11 @@ async def send_email_endpoint(email: schemas.EmailSchema, db: AsyncSession = Dep
     await send_email(email.mail_to, email.subject, email.message)
     db_email = crud.create_email(db, email)
     return {"message": "Email has been sent", "email_id": db_email.id}
+
+@app.get("/surgeries", response_model=list[schemas.Surgery])
+async def read_surgeries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_surgeries(db, skip=skip, limit=limit)
+
+@app.get("/tier-lists", response_model=list[schemas.TierList])
+async def read_tier_lists(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_tier_lists(db, skip=skip, limit=limit)
