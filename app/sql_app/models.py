@@ -1,13 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey
 from sqlalchemy.orm import relationship
 from .database import Base
-
-class Book(Base):
-    __tablename__ ="book"
-
-    id = Column(Integer, primary_key=True, index=True)
-    title = Column(String)
-    description = Column(String)
 
 class Email(Base):
     __tablename__ = "emails"
@@ -26,7 +19,8 @@ class Surgery(Base):
     surgery_description = Column(String(100), nullable=False)
 
     # Relationship to tier lists
-    tier_lists = relationship("TierList", back_populates="surgery")
+    tier_lists = relationship("TierList", back_populates="surgery", cascade="all, delete")
+
 
 
 class TierList(Base):
@@ -46,4 +40,13 @@ class TierList(Base):
     price = Column(String(40), nullable=False)
 
     # Relationship to surgery
-    surgery = relationship("Surgery", back_populates="tier_lists")
+    surgery = relationship("Surgery", back_populates="tier_lists", cascade="all, delete")
+
+class Partner(Base):
+    __tablename__ = 'partners'
+
+    id = Column(Integer, primary_key=True, index=True)
+    company_name = Column(String(100), nullable=False)
+    website = Column(String(100), nullable=False)
+    help_type = Column(String(100), nullable=False)
+    logo = Column(LargeBinary, nullable=True)  # BLOB for the logo image

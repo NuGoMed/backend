@@ -4,15 +4,6 @@ from pydantic.generics import GenericModel
 
 T = TypeVar('T')
 
-
-class BookSchema(BaseModel):
-    id: Optional[int] = None
-    title: Optional[str] = None
-    description: Optional[str] = None
-
-    class Config:
-        orm_mode = True
-
 class EmailSchema(BaseModel):
     id: Optional[int] = None
     mail_from: str
@@ -23,18 +14,20 @@ class EmailSchema(BaseModel):
     class Config:
         orm_mode = True
 
-class Book(BookSchema):
-    id: int
-
-    class Config:
-        orm_mode = True
-
 class SurgeryBase(BaseModel):
     surgery: str
     surgery_description: str
 
-class SurgeryCreate(SurgeryBase):
+class SurgeryCreate(BaseModel):
+    surgery: str
+    surgery_description: str
+
+class SurgeryUpdate(SurgeryBase):
     pass
+
+class SurgeryPartialUpdate(BaseModel):
+    surgery: str | None = None
+    surgery_description: str | None = None
 
 class Surgery(SurgeryBase):
     id: int
@@ -81,12 +74,32 @@ class Request(GenericModel, Generic[T]):
     parameter: Optional[T] = Field(...)
 
 
-class RequestBook(BaseModel):
-    parameter: BookSchema = Field(...)
-
-
 class Response(GenericModel, Generic[T]):
     code: str
     status: str
     message: str
     result: Optional[T]
+
+
+class PartnerBase(BaseModel):
+    company_name: str
+    website: str
+    help_type: str
+    logo: Optional[str] = None  # Base64-encoded string for logo
+
+class PartnerCreate(PartnerBase):
+    pass
+
+class Partner(PartnerBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+
+class PartnerResponse(BaseModel):
+    status: str
+    code: str
+    message: str
+    result: int
+    data: List[Partner]
