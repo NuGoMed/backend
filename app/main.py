@@ -35,7 +35,6 @@ origins = [
     "https://www.nugomed.com"
 ]
 
-
 app.add_middleware(
 CORSMiddleware,
     allow_origins=origins,
@@ -47,26 +46,6 @@ CORSMiddleware,
 @app.get("/")
 async def main():
     return {"message": "Hello World"}
-
-@app.get("/books", response_model=schemas.Response)
-async def read_books(skip: int = 0, limit: int = 100, db: AsyncSession = Depends(get_db)):
-    books = crud.get_book(db, skip=skip, limit=limit)
-    if not books:
-        raise HTTPException(status_code=404, detail="No books found")
-    return schemas.Response(
-        status="Ok", 
-        code="200", 
-        message="Success fetch all data", 
-        result=len(books),
-        data=books
-    )
-
-@app.get("/books/{book_id}", response_model=schemas.Book)
-async def read_book(book_id: int, db: AsyncSession = Depends(get_db)):
-    book = crud.get_book_by_id(db, book_id)
-    if not book:
-        raise HTTPException(status_code=404, detail="Book not found")
-    return book
 
 async def send_email(email: str, subject: str, message: str):
     smtp_host = os.getenv("SMTP_HOST")
@@ -128,6 +107,47 @@ async def send_email_endpoint(email: schemas.EmailSchema, db: AsyncSession = Dep
 async def read_surgeries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_surgeries(db, skip=skip, limit=limit)
 
+@app.get("/surgeries/{surgery_id}", response_model=schemas.Surgery)
+async def read_surgery(surgery_id: int, db: Session = Depends(get_db)):
+    surgery = crud.get_surgeries_by_id(db, surgery_id=surgery_id)
+    if surgery is None:
+        raise HTTPException(status_code=404, detail="Surgery not found")
+    return surgery
+
+@app.delete("/surgeries/{surgery_id}", response_model=schemas.Surgery)
+async def delete_surgery(surgery_id: int, db: Session = Depends(get_db)):
+    surgery = crud.delete_surgery(db, surgery_id=surgery_id)
+    if surgery is None:
+        raise HTTPException(status_code=404, detail="Surgery not found")
+    return surgery
+
+@app.put("/surgeries/{surgery_id}", response_model=schemas.Surgery)
+async def update_surgery(surgery_id: int, surgery_data: schemas.SurgeryUpdate, db: Session = Depends(get_db)):
+    surgery = crud.update_surgery(db, surgery_id=surgery_id, surgery_data=surgery_data)
+    if surgery is None:
+        raise HTTPException(status_code=404, detail="Surgery not found")
+    return surgery
+
+@app.patch("/surgeries/{surgery_id}", response_model=schemas.Surgery)
+async def partial_update_surgery(surgery_id: int, surgery_data: schemas.SurgeryPartialUpdate, db: Session = Depends(get_db)):
+    surgery = crud.partial_update_surgery(db, surgery_id=surgery_id, surgery_data=surgery_data)
+    if surgery is None:
+        raise HTTPException(status_code=404, detail="Surgery not found")
+    return surgery
+
+@app.post("/surgeries", response_model=schemas.Surgery)
+async def create_surgery(surgery: schemas.SurgeryCreate, db: Session = Depends(get_db)):
+    db_surgery = crud.create_surgery(db, surgery)
+    if db_surgery is None:
+        raise HTTPException(status_code=400, detail="Failed to create surgery")
+    return db_surgery
+
 @app.get("/tier-lists", response_model=list[schemas.TierList])
 async def read_tier_lists(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_tier_lists(db, skip=skip, limit=limit)
+
+@app.get("/partners", response_model=list[schemas.Partner])
+async def read_partner_lists(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    print("Here")
+    return crud.get_partner_lists(db, skip=skip, limit=limit)
+
