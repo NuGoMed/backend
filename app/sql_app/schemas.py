@@ -17,10 +17,12 @@ class EmailSchema(BaseModel):
 class SurgeryBase(BaseModel):
     surgery: str
     surgery_description: str
+    partner_id: int
 
 class SurgeryCreate(BaseModel):
     surgery: str
     surgery_description: str
+    partner_id: int
 
 class SurgeryUpdate(SurgeryBase):
     pass
@@ -30,7 +32,7 @@ class SurgeryPartialUpdate(BaseModel):
     surgery_description: str | None = None
 
 class Surgery(SurgeryBase):
-    id: int
+    id: int    
 
     class Config:
         orm_mode = True
@@ -42,25 +44,15 @@ class TierListBase(BaseModel):
     visa_sponsorship: str
     flight_type: str
     number_family_members: str
-    hospital_accomodations: str
+    hospital_accommodations: str
     hotel: str
     duration_stay: str
     tourism_package: str
     post_surgery_monitoring: str
     price: str
 
-class TierList(BaseModel):
-    tier: str
-    surgery_id: int
-    visa_sponsorship: str
-    flight_type: str
-    number_family_members: str
-    hospital_accomodations: str
-    hotel: str
-    duration_stay: str
-    tourism_package: str
-    post_surgery_monitoring: str
-    price: str
+class TierList(TierListBase):
+    pass
 
 class TierListResponse(BaseModel):
     status: str
@@ -68,6 +60,9 @@ class TierListResponse(BaseModel):
     message: str
     result: int
     data: List[TierList]
+
+class TierListUpdate(TierListBase):
+    pass
 
 
 class Request(GenericModel, Generic[T]):
@@ -87,11 +82,22 @@ class PartnerBase(BaseModel):
     help_type: str
     logo: Optional[str] = None  # Base64-encoded string for logo
 
-class PartnerCreate(PartnerBase):
+class PartnerCreate(BaseModel):
+    company_name: str
+    website: str
+    help_type: str
+    logo: Optional[str] = None  # Base64-encoded string for logo
+
+    class Config:
+        orm_mode = True
+
+
+class PartnerUpdate(PartnerBase):
     pass
 
 class Partner(PartnerBase):
     id: int
+    surgeries: List['Surgery'] = []
 
     class Config:
         orm_mode = True
@@ -103,3 +109,22 @@ class PartnerResponse(BaseModel):
     message: str
     result: int
     data: List[Partner]
+
+class UserBase(BaseModel):
+    username: str
+
+class UserCreate(UserBase):
+    password: str
+
+class UserResponse(UserBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
