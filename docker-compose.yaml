@@ -13,7 +13,7 @@ services:
     networks:
       - nugomed-app
     volumes:
-      - "./db:/var/lib/postgresql/data"
+      - "./db-volume:/var/lib/postgresql/data"
       - ./app/sql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the initialization script
 
   pgadmin:

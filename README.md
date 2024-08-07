@@ -31,42 +31,16 @@ This project is a web API built with [FastAPI](https://fastapi.tiangolo.com/), a
     cd backend
     ```
 
-2. **Create and activate a virtual environment**:
-    ```bash
-    python -m venv env
-    source env/bin/activate  # On Windows, use `env\Scripts\activate`
-    ```
-
-3. **Install dependencies**:
-    ```bash
-    pip install -r requirements.txt
-    ```
-
-4. **Set up the environment variables**:
-    Create a `.env` file in the project root and add the necessary environment variables:
-    ```
-    DATABASE_URL=sqlite+aiosqlite:///./test.db
-    SMTP_HOST=smtp.example.com
-    SMTP_PORT=587
-    SMTP_USER=your-email@example.com
-    SMTP_PASSWORD=your-email-password
-    ```
-
 ## Running the Application
 
-1. **Initialize the database**:
+1. **Initialize the database && Start the FastAPI server**:
     ```bash
-    python -m sql_app.models
+    docker-compose up -d
     ```
 
-2. **Start the FastAPI server**:
-    ```bash
-    uvicorn main:app --reload
-    ```
+2. Open your browser and go to `http://127.0.0.1:8000/docs` to see the interactive API documentation (provided by Swagger UI).
 
-3. Open your browser and go to `http://127.0.0.1:8000/docs` to see the interactive API documentation (provided by Swagger UI).
-
-4. Go to `http://127.0.0.1:8000/redoc` for an alternative API documentation (provided by ReDoc).
+3. Go to `http://127.0.0.1:8000/redoc` for an alternative API documentation (provided by ReDoc).
 
 ## API Endpoints
 

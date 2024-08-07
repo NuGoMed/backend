@@ -4,14 +4,15 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'admin') THEN
 CREATE ROLE admin LOGIN PASSWORD 'POSTGRES_PASSWORD';
 ALTER ROLE admin WITH SUPERUSER;
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 END IF;
 END $$;
 
 -- CREATE TABLE IF NOT EXISTS users (user_id serial PRIMARY KEY, name VARCHAR(50) UNIQUE NOT NULL);
 -- Table for partners
 CREATE TABLE IF NOT EXISTS partners (
-    id serial PRIMARY KEY, 
-    company_name VARCHAR(100) NOT NULL, 
+    id serial PRIMARY KEY,
+    company_name VARCHAR(100) NOT NULL,
     website VARCHAR(100) NOT NULL,
     help_type VARCHAR(100) NOT NULL,
     logo bytea
@@ -19,10 +20,17 @@ CREATE TABLE IF NOT EXISTS partners (
 
 -- Table for surgeries
 CREATE TABLE IF NOT EXISTS surgeries (
-    id serial PRIMARY KEY, 
-    surgery VARCHAR(100) NOT NULL, 
+    id serial PRIMARY KEY,
+    surgery VARCHAR(100) NOT NULL,
     surgery_description VARCHAR(100) NOT NULL,
     partner_id INTEGER NOT NULL REFERENCES partners(id) ON DELETE CASCADE
+);
+
+--Table for users
+CREATE TABLE IF NOT EXISTS users (
+    id serial PRIMARY KEY,
+    username VARCHAR(100) NOT NULL,
+    hashed_password VARCHAR(100) NOT NULL
 );
 
 -- Table for tier lists
@@ -71,13 +79,13 @@ VALUES (
 
 -- Surgeries Table
 -- Insert data into surgeries table
-INSERT INTO surgeries (surgery, surgery_description, partner_id) VALUES 
+INSERT INTO surgeries (surgery, surgery_description, partner_id) VALUES
 ('Oral Care Implant Plan', 'Placement of 4/6 implants with total fixed prosthesis/per arch', 1),
 ('Hair Care Implant Plan', 'Follicular Unit Extraction', 2);
 
 -- Insert data into tier_lists table
 INSERT INTO tier_lists(tier, surgery_id, visa_sponsorship, flight_type, number_family_members, hospital_accommodations, hotel, duration_stay, tourism_package, post_surgery_monitoring, price)
-VALUES 
+VALUES
 ('Standard', 1, 'Support for obtaining a visa', 'Travel in economy class',
  'No family members','Bed in infarmary', '3/4 star hotel', 'Shortest possible stay',
  'No tourism package', 'Follow-up until the date of travel home', '12000€'),
@@ -88,3 +96,9 @@ VALUES
  'Possibility of bringing 3 companions','Bed in private room with suite', '5 star hotel',
  'Extended stay (minimum 15 days)', 'Tourism package for client and companions, with national trips and itineraries',
  'Monitoring the client in the country of origin up to 6 months after surgery', '20500€');
+
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- Insert a user with a hashed password using bcrypt
+INSERT INTO users (username, hashed_password)
+VALUES ('luispedro188', crypt('sardinha189', gen_salt('bf')));
