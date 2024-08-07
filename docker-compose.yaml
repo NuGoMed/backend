@@ -5,32 +5,47 @@ services:
     image: postgres:latest
     container_name: bd-nugomed
     environment:
-      - POSTGRES_PASSWORD=postgres123
-      - POSTGRES_USER=admin
-      - POSTGRES_DB=bd
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_USER: admin
+      POSTGRES_DB: bd
     ports:
-      - "5433:5432"
+      - "5432:5432"
     networks:
       - nugomed-app
     volumes:
-      - "D:/nugomeddata/Data/db:/var/lib/postgresql/data"
+      - "./db:/var/lib/postgresql/data"
       - ./app/sql/init.sql:/docker-entrypoint-initdb.d/init.sql  # Mount the initialization script
-
-  #nugo-backend:
-  # image: nugomed/backend:1.4
-  #ports:
-  #    - "8080:80"
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: 8220025@estg.ipp.pt
+      PGADMIN_DEFAULT_EMAIL: luispedrotrinta.1998@gmail.com
       PGADMIN_DEFAULT_PASSWORD: pgadmin123
     networks:
       - nugomed-app
     ports:
       - "9999:80"
+
+  backend:
+    image: nugomed/backend:1.0.0
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://admin:postgres123@postgres/bd
+      SMTP_HOST: smtp.gmail.com
+      SMTP_PORT: 465
+      SMTP_USER: luispedrotrinta.1998@gmail.com
+      SMTP_PASSWORD: ajig wmdc ywkr qvuj
+      SECRET_KEY: nugomed_secret_key
+      ACCESS_TOKEN_EXPIRE_MINUTES: 10
+      POSTGRES_PASSWORD: postgres123
+      POSTGRES_USER: admin
+      POSTGRES_DB: bd
+    networks:
+      - nugomed-app
 
 networks:
   nugomed-app:
