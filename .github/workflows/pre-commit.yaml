@@ -1,0 +1,40 @@
+name: pre-commit build
+
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  pre-commit:
+    name: pre-commit/run
+    runs-on: [ubuntu-latest]
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Configure Python
+        uses: actions/setup-python@v2
+
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          sudo apt-get -y update
+          sudo apt install -y python3 python3-pip gawk unzip shellcheck
+
+      - name: Check for Changed Files
+        id: file_changes
+        uses: trilom/file-changes-action@v1.2.4
+        with:
+          output: ' '
+      - name: Set Up Pre-Commit Cache
+        id: commit_check
+        uses: pre-commit/action@v2.0.3
+        env:
+          SKIP: no-commit-to-branch
+        with:
+          extra_args: --files ${{steps.file_changes.outputs.files}}
