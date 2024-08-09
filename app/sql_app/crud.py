@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
-from .models import Email, Surgery, TierList, Partner, PDFFile, User
-from .schemas import EmailSchema, SurgeryCreate, SurgeryUpdate, SurgeryPartialUpdate, UserCreate, TierListUpdate, PartnerUpdate, PartnerCreate
+from .models import Email, Surgery, TierList, Partner, PDFFile, User, Buy, Customer
+from .schemas import EmailSchema, SurgeryCreate, SurgeryUpdate, SurgeryPartialUpdate, UserCreate, TierListUpdate, PartnerUpdate, PartnerCreate, CustomerCreate, BuyCreate
 import base64
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -212,3 +212,55 @@ def delete_pdf_file(db: Session, file_id: int):
         db.commit()
     return db_pdf_file
     
+def create_customer(db: Session, customer: CustomerCreate):
+    db_customer = Customer(
+        full_name=customer.full_name,
+        contact_email=customer.contact_email,
+        birthdate=customer.birthdate,
+        national_id_number=customer.national_id_number,
+        passport_number=customer.passport_number,
+        country_of_origin=customer.country_of_origin,
+        denied_visa=customer.denied_visa
+    )
+    db.add(db_customer)
+    db.commit()
+    db.refresh(db_customer)
+    return db_customer
+
+def get_customer(db: Session, customer_id: int):
+    return db.query(Customer).filter(Customer.id == customer_id).first()
+
+def get_customers(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(Customer).offset(skip).limit(limit).all()
+
+def create_buy(db: Session, buy: BuyCreate):
+    db_buy = Buy(
+        customer_id=buy.customer_id,
+        valid_photo=buy.valid_photo,
+        id_scan=buy.id_scan,
+        medical_dossier=buy.medical_dossier,
+        trip_clearance_doc=buy.trip_clearance_doc,
+        schengen_area=buy.schengen_area,
+        oral_care_implant_plan=buy.oral_care_implant_plan,
+        hair_care_implant_plan=buy.hair_care_implant_plan,
+        visa_documents=buy.visa_documents,
+        visa_application_form=buy.visa_application_form,
+        identical_photos=buy.identical_photos,
+        passport_copy=buy.passport_copy,
+        medical_travel_insurance=buy.medical_travel_insurance,
+        proof_of_financial_means=buy.proof_of_financial_means,
+        guarantee_letter=buy.guarantee_letter,
+        surgery_id=buy.surgery_id,
+        tier_list_id=buy.tier_list_id,
+        price=buy.price
+    )
+    db.add(db_buy)
+    db.commit()
+    db.refresh(db_buy)
+    return db_buy
+
+def get_buy(db: Session, buy_id: int):
+    return db.query(Buy).filter(Buy.id == buy_id).first()
+
+def get_buys_by_customer(db: Session, customer_id: int, skip: int = 0, limit: int = 100):
+    return db.query(Buy).filter(Buy.customer_id == customer_id).offset(skip).limit(limit).all()
