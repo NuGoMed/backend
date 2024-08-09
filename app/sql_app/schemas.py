@@ -1,6 +1,7 @@
 from typing import List, Optional, Generic, TypeVar
-from pydantic import BaseModel , Field, EmailStr
-from pydantic.generics import GenericModel
+from pydantic import BaseModel , Field
+from datetime import date
+
 
 T = TypeVar('T')
 
@@ -39,6 +40,7 @@ class Surgery(SurgeryBase):
 
 
 class TierListBase(BaseModel):
+    id: int
     tier: str
     surgery_id: int
     visa_sponsorship: str
@@ -65,11 +67,11 @@ class TierListUpdate(TierListBase):
     pass
 
 
-class Request(GenericModel, Generic[T]):
+class Request(BaseModel, Generic[T]):
     parameter: Optional[T] = Field(...)
 
 
-class Response(GenericModel, Generic[T]):
+class Response(BaseModel, Generic[T]):
     code: str
     status: str
     message: str
@@ -128,3 +130,51 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Optional[str] = None
+
+class CustomerBase(BaseModel):
+    full_name: str
+    contact_email: str
+    birthdate: date
+    national_id_number: Optional[str] = None
+    passport_number: Optional[str] = None
+    country_of_origin: str
+    denied_visa: bool
+
+class CustomerCreate(CustomerBase):
+    pass
+
+class CustomerResponse(CustomerBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+
+class BuyBase(BaseModel):
+    valid_photo: Optional[bytes] = None
+    id_scan: Optional[bytes] = None
+    medical_dossier: Optional[bytes] = None
+    trip_clearance_doc: Optional[bytes] = None
+    schengen_area: bool
+    oral_care_implant_plan: Optional[bytes] = None
+    hair_care_implant_plan: Optional[bytes] = None
+    visa_documents: Optional[bytes] = None
+    visa_application_form: Optional[bytes] = None
+    identical_photos: Optional[bytes] = None
+    passport_copy: Optional[bytes] = None
+    medical_travel_insurance: Optional[bytes] = None
+    proof_of_financial_means: Optional[bytes] = None
+    guarantee_letter: Optional[bytes] = None
+    customer_id: int
+    surgery_id: int
+    tier_list_id: int
+    price: str
+
+class BuyCreate(BuyBase):
+    pass
+
+class BuyResponse(BuyBase):
+    id: int
+    customer_id: int
+
+    class Config:
+        orm_mode = True
