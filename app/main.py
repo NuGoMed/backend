@@ -245,3 +245,34 @@ def get_file(file_id: int, db: Session = Depends(get_db), current_user: models.U
     
     file_like = BytesIO(file_record.file_data)
     return StreamingResponse(file_like, media_type="application/pdf", headers={"Content-Disposition": f"inline; filename={file_record.file_name}"})
+
+@app.post("/customers/", response_model=schemas.CustomerResponse)
+def create_customer(customer: schemas.CustomerCreate, db: Session = Depends(get_db)):
+    return crud.create_customer(db, customer)
+
+@app.get("/customers/{customer_id}", response_model=schemas.CustomerResponse)
+def read_customer(customer_id: int, db: Session = Depends(get_db)):
+    db_customer = crud.get_customer(db, customer_id)
+    if db_customer is None:
+        raise HTTPException(status_code=404, detail="Customer not found")
+    return db_customer
+
+@app.get("/customers/", response_model=list[schemas.CustomerResponse])
+def read_customers(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_customers(db, skip=skip, limit=limit)
+
+@app.post("/buys/", response_model=schemas.BuyResponse)
+def create_buy(buy: schemas.BuyCreate, db: Session = Depends(get_db)):
+    return crud.create_buy(db, buy)
+
+@app.get("/buys/{buy_id}", response_model=schemas.BuyResponse)
+def read_buy(buy_id: int, db: Session = Depends(get_db)):
+    db_buy = crud.get_buy(db, buy_id)
+    if db_buy is None:
+        raise HTTPException(status_code=404, detail="Buy not found")
+    return db_buy
+
+@app.get("/customers/{customer_id}/buys/", response_model=list[schemas.BuyResponse])
+def read_buys_by_customer(customer_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
+    return crud.get_buys_by_customer(db, customer_id, skip=skip, limit=limit)
+    

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, DateTime, func
+from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, DateTime, func, Boolean, Date
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -65,6 +65,54 @@ class PDFFile(Base):
     upload_date = Column(DateTime, server_default=func.now())
     file_data = Column(LargeBinary, nullable=False)
     description = Column(String)
+
+class Customer(Base):
+    __tablename__ = 'customers'
+
+    id = Column(Integer, primary_key=True, index=True)
+    full_name = Column(String, nullable=False)
+    contact_email = Column(String, unique=True, nullable=False)
+    birthdate = Column(Date, nullable=False)
+    national_id_number = Column(String, nullable=True)
+    passport_number = Column(String, nullable=True)
+    country_of_origin = Column(String, nullable=False)
+    denied_visa = Column(Boolean, nullable=False)
+
+    buys = relationship("Buy", back_populates="customer")
+
+class Buy(Base):
+    __tablename__ = 'buys'
+
+    id = Column(Integer, primary_key=True, index=True)
+    
+    # Foreign key references to the Customer, Surgery, and TierList tables
+    customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
+    surgery_id = Column(Integer, ForeignKey('surgeries.id'), nullable=False)
+    tier_list_id = Column(Integer, ForeignKey('tier_lists.id'), nullable=False)
+    
+    # Adding a price field (assuming it's a float)
+    price = Column(String, nullable=False)
+
+    # File fields
+    valid_photo = Column(LargeBinary, nullable=True)  # Store file as binary data
+    id_scan = Column(LargeBinary, nullable=True)
+    medical_dossier = Column(LargeBinary, nullable=True)
+    trip_clearance_doc = Column(LargeBinary, nullable=True)
+    schengen_area = Column(Boolean, nullable=False)
+    oral_care_implant_plan = Column(LargeBinary, nullable=True)
+    hair_care_implant_plan = Column(LargeBinary, nullable=True)
+    visa_documents = Column(LargeBinary, nullable=True)
+    visa_application_form = Column(LargeBinary, nullable=True)
+    identical_photos = Column(LargeBinary, nullable=True)
+    passport_copy = Column(LargeBinary, nullable=True)
+    medical_travel_insurance = Column(LargeBinary, nullable=True)
+    proof_of_financial_means = Column(LargeBinary, nullable=True)
+    guarantee_letter = Column(LargeBinary, nullable=True)
+
+    # Relationships
+    customer = relationship("Customer", back_populates="buys")
+    surgery = relationship("Surgery")  # Relationship to Surgery
+    tier_list = relationship("TierList")  # Relationship to TierList
 
 class User(Base):
     __tablename__ = "users"

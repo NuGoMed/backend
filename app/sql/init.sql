@@ -49,6 +49,53 @@ CREATE TABLE IF NOT EXISTS tier_lists (
     price VARCHAR(40) NOT NULL
 );
 
+-- Table to store customer details
+CREATE TABLE customers (
+    id SERIAL PRIMARY KEY,
+    full_name VARCHAR(255) NOT NULL,
+    contact_email VARCHAR(255) NOT NULL UNIQUE,
+    birthdate DATE NOT NULL,
+    national_id_number VARCHAR(255),
+    passport_number VARCHAR(255),
+    country_of_origin VARCHAR(255) CHECK (country_of_origin IN (
+        'Austria', 'Belgium', 'Bulgaria', 'Switzerland', 'Cyprus', 'Czech Republic', 'Germany', 'Denmark', 
+        'Estonia', 'Greece', 'Spain', 'Finland', 'France', 'Croatia', 'Hungary', 'Ireland', 'Iceland', 
+        'Italy', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Latvia', 'Malta', 'Netherlands', 'Norway', 
+        'Poland', 'Portugal', 'Romania', 'Sweden', 'Slovenia', 'Slovakia', 'United Kingdom'
+    )),
+    denied_visa BOOLEAN NOT NULL
+);
+
+
+-- Table to store additional documents for each submission
+CREATE TABLE buys (
+    id SERIAL PRIMARY KEY,
+    customer_id INTEGER NOT NULL REFERENCES customers(id) ON DELETE CASCADE,
+    surgery_id INTEGER NOT NULL REFERENCES surgeries(id) ON DELETE CASCADE,
+    tier_list_id INTEGER NOT NULL REFERENCES tier_lists(id) ON DELETE CASCADE,
+    price VARCHAR(255),
+    valid_photo BYTEA, -- File upload for valid photo
+    id_scan BYTEA, -- File upload for ID scan
+    medical_dossier BYTEA, -- Medical dossier file
+    trip_clearance_doc BYTEA, -- Trip clearance document file
+    schengen_area BOOLEAN NOT NULL, -- Whether the documents pertain to Schengen Area or not
+    oral_care_implant_plan BYTEA, -- Oral care implant plan file
+    hair_care_implant_plan BYTEA, -- Hair care implant plan file
+    visa_documents BYTEA, -- Visa documents file
+    visa_application_form BYTEA, -- Visa application form
+    identical_photos BYTEA, -- Identical photos
+    passport_copy BYTEA, -- Passport copy
+    medical_travel_insurance BYTEA, -- Medical travel insurance
+    proof_of_financial_means BYTEA, -- Proof of financial means
+    guarantee_letter BYTEA, -- Digitally written guarantee letter
+    FOREIGN KEY (customer_id) REFERENCES customers(id),
+    FOREIGN KEY (surgery_id) REFERENCES surgeries(id),
+    FOREIGN KEY (tier_list_id) REFERENCES tier_lists(id)
+);
+
+
+
+
 
 -- Table for PDF files
 CREATE TABLE IF NOT EXISTS pdf_files (
