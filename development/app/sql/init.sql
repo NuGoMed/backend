@@ -58,9 +58,9 @@ CREATE TABLE customers (
     national_id_number VARCHAR(255),
     passport_number VARCHAR(255),
     country_of_origin VARCHAR(255) CHECK (country_of_origin IN (
-        'Austria', 'Belgium', 'Bulgaria', 'Switzerland', 'Cyprus', 'Czech Republic', 'Germany', 'Denmark', 
-        'Estonia', 'Greece', 'Spain', 'Finland', 'France', 'Croatia', 'Hungary', 'Ireland', 'Iceland', 
-        'Italy', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Latvia', 'Malta', 'Netherlands', 'Norway', 
+        'Austria', 'Belgium', 'Bulgaria', 'Switzerland', 'Cyprus', 'Czech Republic', 'Germany', 'Denmark',
+        'Estonia', 'Greece', 'Spain', 'Finland', 'France', 'Croatia', 'Hungary', 'Ireland', 'Iceland',
+        'Italy', 'Liechtenstein', 'Lithuania', 'Luxembourg', 'Latvia', 'Malta', 'Netherlands', 'Norway',
         'Poland', 'Portugal', 'Romania', 'Sweden', 'Slovenia', 'Slovakia', 'United Kingdom'
     )),
     denied_visa BOOLEAN NOT NULL

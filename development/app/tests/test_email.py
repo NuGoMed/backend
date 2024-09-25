@@ -19,7 +19,6 @@ def test_send_email(mock_send_email):
             "message": "This is a test email message."
         }
     )
-    
+
     assert response.status_code == 200
     assert response.json()["message"] == "Email has been sent"
-

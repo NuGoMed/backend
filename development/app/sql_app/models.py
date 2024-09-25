@@ -33,7 +33,7 @@ class Surgery(Base):
 
     # Relationship to tier lists
     tier_lists = relationship("TierList", back_populates="surgery", cascade="all, delete")
-    
+
     # Relationship to partner
     partner = relationship("Partner", back_populates="surgeries")
 
@@ -84,12 +84,12 @@ class Buy(Base):
     __tablename__ = 'buys'
 
     id = Column(Integer, primary_key=True, index=True)
-    
+
     # Foreign key references to the Customer, Surgery, and TierList tables
     customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
     surgery_id = Column(Integer, ForeignKey('surgeries.id'), nullable=False)
     tier_list_id = Column(Integer, ForeignKey('tier_lists.id'), nullable=False)
-    
+
     # Adding a price field (assuming it's a float)
     price = Column(String, nullable=False)
 
