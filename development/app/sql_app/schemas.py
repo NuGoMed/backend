@@ -33,7 +33,7 @@ class SurgeryPartialUpdate(BaseModel):
     surgery_description: str | None = None
 
 class Surgery(SurgeryBase):
-    id: int    
+    id: int
 
     class Config:
         orm_mode = True

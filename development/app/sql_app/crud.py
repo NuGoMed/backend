@@ -91,7 +91,7 @@ def get_tier_lists(db: Session, skip: int = 0, limit: int = 100):
         return tier_lists
     except Exception as e:
         raise e
-    
+
 def update_tier_lists(db: Session, tier_list_id: int, tier_list_data: TierListUpdate):
     tier_list = db.query(TierList).filter(TierList.id == tier_list_id).first()
     if not tier_list:
@@ -107,7 +107,7 @@ def update_tier_lists(db: Session, tier_list_id: int, tier_list_data: TierListUp
     db.commit()
     db.refresh(tier_list)
     return tier_list
-    
+
 def get_partner_lists(db: Session, skip: int = 0, limit: int = 100):
     try:
         partners = db.query(Partner).offset(skip).limit(limit).all()
@@ -123,16 +123,16 @@ def get_partner_lists(db: Session, skip: int = 0, limit: int = 100):
             })
 
         return partners_list
-    
+
     except Exception as e:
         raise e
-    
+
 def get_partner_by_id(db: Session, partner_id: int):
     try:
         partner = db.query(Partner).filter(Partner.id == partner_id).first()
         if not partner:
             return None
-        
+
         logo_base64 = base64.b64encode(partner.logo).decode('utf-8') if partner.logo else None
         return {
             "id": partner.id,
@@ -165,7 +165,7 @@ def update_partner(db: Session, partner_id: int, partner_data: PartnerUpdate):
             setattr(partner, key, value)
         db.commit()
         db.refresh(partner)
-        
+
         logo_base64 = base64.b64encode(partner.logo).decode('utf-8') if partner.logo else None
         return {
             "id": partner.id,
@@ -211,7 +211,7 @@ def delete_pdf_file(db: Session, file_id: int):
         db.delete(db_pdf_file)
         db.commit()
     return db_pdf_file
-    
+
 def create_customer(db: Session, customer: CustomerCreate):
     db_customer = Customer(
         full_name=customer.full_name,
