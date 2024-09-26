@@ -135,10 +135,10 @@ async def send_email_endpoint(email: schemas.EmailSchema, db: AsyncSession = Dep
 async def read_surgeries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_surgeries(db, skip=skip, limit=limit)
 
-@app.get("/surgeries/{surgery_id}", response_model=schemas.Surgery)
+@app.get("/surgeries/{surgery_id}", response_model=schemas.SurgeryWithLogo)
 async def read_surgery(surgery_id: int, db: Session = Depends(get_db)):
     surgery = crud.get_surgeries_by_id(db, surgery_id=surgery_id)
-    if surgery is None:
+    if not surgery:
         raise HTTPException(status_code=404, detail="Surgery not found")
     return surgery
 

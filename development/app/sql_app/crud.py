@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from passlib.context import CryptContext
 from .models import Email, Surgery, TierList, Partner, PDFFile, User, Buy, Customer
-from .schemas import EmailSchema, SurgeryCreate, SurgeryUpdate, SurgeryPartialUpdate, UserCreate, TierListUpdate, PartnerUpdate, PartnerCreate, CustomerCreate, BuyCreate
+from .schemas import EmailSchema, SurgeryCreate, SurgeryUpdate, SurgeryPartialUpdate, UserCreate, TierListUpdate, PartnerUpdate, PartnerCreate, CustomerCreate, BuyCreate, SurgeryWithLogo
 import base64
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -32,7 +32,25 @@ async def get_email_by_id(db: Session, email_id: int) -> Email:
     return db.query(Email).filter(Email.id == email_id).first()
 
 def get_surgeries_by_id(db: Session, surgery_id: int):
-    return db.query(Surgery).filter(Surgery.id == surgery_id).first()
+    result = (
+        db.query(Surgery, Partner.logo)
+        .join(Partner)
+        .filter(Surgery.id == surgery_id)
+        .first()
+    )
+    if result:
+        surgery, logo = result
+        if isinstance(logo, bytes):
+            logo = base64.b64encode(logo).decode('utf-8')  # Convert bytes to base64 string
+        return SurgeryWithLogo(
+            id=surgery.id,
+            surgery=surgery.surgery,
+            surgery_description=surgery.surgery_description,
+            partner_id=surgery.partner_id,
+            logo=logo
+        )
+    return None
+
 
 def get_surgeries(db: Session, skip: int = 0, limit: int = 100):
     return db.query(Surgery).offset(skip).limit(limit).all()
