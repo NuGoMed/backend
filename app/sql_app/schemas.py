@@ -38,6 +38,12 @@ class Surgery(SurgeryBase):
     class Config:
         orm_mode = True
 
+class SurgeryWithLogo(BaseModel):
+    id: int
+    surgery: str
+    surgery_description: str
+    partner_id: int
+    logo: str
 
 class TierListBase(BaseModel):
     id: int
