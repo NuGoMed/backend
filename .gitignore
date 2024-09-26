@@ -1,8 +1,4 @@
-development/env
-development/.txt
-development/*.pyc
-development/db-volume/*
-production/env
-production/.txt
-production/*.pyc
-production/db-volume/*
+env
+.txt
+*.pyc
+db-volume/*
