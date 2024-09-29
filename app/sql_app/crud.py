@@ -35,7 +35,7 @@ def get_surgeries_by_id(db: Session, surgery_id: int):
     return db.query(Surgery).filter(Surgery.id == surgery_id).first()
 
 def get_surgeries(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Surgery).offset(skip).limit(limit).all()
+    return db.query(Surgery).order_by(Surgery.id).offset(skip).limit(limit).all()
 
 def delete_surgery(db: Session, surgery_id: int):
     surgery = db.query(Surgery).filter(Surgery.id == surgery_id).first()
