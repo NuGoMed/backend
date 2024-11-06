@@ -33,7 +33,7 @@ class SurgeryPartialUpdate(BaseModel):
     surgery_description: str | None = None
 
 class Surgery(SurgeryBase):
-    id: int    
+    id: int
 
     class Config:
         orm_mode = True
@@ -88,13 +88,17 @@ class PartnerBase(BaseModel):
     company_name: str
     website: str
     help_type: str
-    logo: Optional[str] = None  # Base64-encoded string for logo
+    small_description: Optional[str] = None
+    large_description: Optional[str] = None
+    logo: Optional[str] = None
 
 class PartnerCreate(BaseModel):
     company_name: str
     website: str
     help_type: str
-    logo: Optional[str] = None  # Base64-encoded string for logo
+    small_description: Optional[str] = None
+    large_description: Optional[str] = None
+    logo: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -143,6 +147,7 @@ class CustomerBase(BaseModel):
     birthdate: date
     national_id_number: Optional[str] = None
     passport_number: Optional[str] = None
+    tin_number: Optional[str] = None
     country_of_origin: str
     denied_visa: bool
 
