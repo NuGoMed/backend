@@ -133,7 +133,7 @@ async def send_email_endpoint(email: schemas.EmailSchema, db: AsyncSession = Dep
 
 @app.get("/surgeries", response_model=list[schemas.Surgery])
 async def read_surgeries(skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
-    return crud.get_surgeries(db, skip=skip, limit=limit)    
+    return crud.get_surgeries(db, skip=skip, limit=limit)
 
 @app.get("/surgeries/{surgery_id}", response_model=schemas.SurgeryWithLogo)
 async def read_surgery(surgery_id: int, db: Session = Depends(get_db)):
@@ -242,7 +242,7 @@ def get_file(file_id: int, db: Session = Depends(get_db), current_user: models.U
     file_record = db.query(models.PDFFile).filter(models.PDFFile.id == file_id).first()
     if not file_record:
         raise HTTPException(status_code=404, detail="File not found")
-    
+
     file_like = BytesIO(file_record.file_data)
     return StreamingResponse(file_like, media_type="application/pdf", headers={"Content-Disposition": f"inline; filename={file_record.file_name}"})
 
@@ -275,4 +275,3 @@ def read_buy(buy_id: int, db: Session = Depends(get_db)):
 @app.get("/customers/{customer_id}/buys/", response_model=list[schemas.BuyResponse])
 def read_buys_by_customer(customer_id: int, skip: int = 0, limit: int = 100, db: Session = Depends(get_db)):
     return crud.get_buys_by_customer(db, customer_id, skip=skip, limit=limit)
-    

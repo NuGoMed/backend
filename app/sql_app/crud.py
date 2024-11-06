@@ -52,7 +52,7 @@ def get_surgeries_by_id(db: Session, surgery_id: int):
     return None
 
 def get_surgeries(db: Session, skip: int = 0, limit: int = 100):
-    return db.query(Surgery).order_by(Surgery.id).offset(skip).limit(limit).all() 
+    return db.query(Surgery).order_by(Surgery.id).offset(skip).limit(limit).all()
 
 def delete_surgery(db: Session, surgery_id: int):
     surgery = db.query(Surgery).filter(Surgery.id == surgery_id).first()
@@ -108,7 +108,7 @@ def get_tier_lists(db: Session, skip: int = 0, limit: int = 100):
         return tier_lists
     except Exception as e:
         raise e
-    
+
 def update_tier_lists(db: Session, tier_list_id: int, tier_list_data: TierListUpdate):
     tier_list = db.query(TierList).filter(TierList.id == tier_list_id).first()
     if not tier_list:
@@ -124,7 +124,7 @@ def update_tier_lists(db: Session, tier_list_id: int, tier_list_data: TierListUp
     db.commit()
     db.refresh(tier_list)
     return tier_list
-    
+
 def get_partner_lists(db: Session, skip: int = 0, limit: int = 100):
     try:
         partners = db.query(Partner).offset(skip).limit(limit).all()
@@ -136,26 +136,30 @@ def get_partner_lists(db: Session, skip: int = 0, limit: int = 100):
                 "company_name": partner.company_name,
                 "website": partner.website,
                 "help_type": partner.help_type,
+                "small_description": partner.small_description,
+                "large_description": partner.large_description,
                 "logo": logo_base64
             })
 
         return partners_list
-    
+
     except Exception as e:
         raise e
-    
+
 def get_partner_by_id(db: Session, partner_id: int):
     try:
         partner = db.query(Partner).filter(Partner.id == partner_id).first()
         if not partner:
             return None
-        
+
         logo_base64 = base64.b64encode(partner.logo).decode('utf-8') if partner.logo else None
         return {
             "id": partner.id,
             "company_name": partner.company_name,
             "website": partner.website,
             "help_type": partner.help_type,
+            "small_description": partner.small_description,
+            "large_description": partner.large_description,
             "logo": logo_base64
         }
     except Exception as e:
@@ -182,13 +186,15 @@ def update_partner(db: Session, partner_id: int, partner_data: PartnerUpdate):
             setattr(partner, key, value)
         db.commit()
         db.refresh(partner)
-        
+
         logo_base64 = base64.b64encode(partner.logo).decode('utf-8') if partner.logo else None
         return {
             "id": partner.id,
             "company_name": partner.company_name,
             "website": partner.website,
             "help_type": partner.help_type,
+            "small_description": partner.small_description,
+            "large_description": partner.large_description,
             "logo": logo_base64
         }
     except Exception as e:
@@ -200,6 +206,8 @@ def create_partner(db: Session, partner: PartnerCreate):
             company_name=partner.company_name,
             website=partner.website,
             help_type=partner.help_type,
+            small_description=partner.small_description,
+            large_description=partner.large_description,
             logo=base64.b64decode(partner.logo) if partner.logo else None
         )
         db.add(db_partner)
@@ -228,7 +236,7 @@ def delete_pdf_file(db: Session, file_id: int):
         db.delete(db_pdf_file)
         db.commit()
     return db_pdf_file
-    
+
 def create_customer(db: Session, customer: CustomerCreate):
     db_customer = Customer(
         full_name=customer.full_name,
@@ -236,6 +244,7 @@ def create_customer(db: Session, customer: CustomerCreate):
         birthdate=customer.birthdate,
         national_id_number=customer.national_id_number,
         passport_number=customer.passport_number,
+        tin_number=customer.passport_number,
         country_of_origin=customer.country_of_origin,
         denied_visa=customer.denied_visa
     )

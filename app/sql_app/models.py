@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, DateTime, func, Boolean, Date
+from sqlalchemy import Column, Integer, String, LargeBinary, ForeignKey, DateTime, func, Boolean, Date, Text
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -18,6 +18,8 @@ class Partner(Base):
     company_name = Column(String(100), nullable=False)
     website = Column(String(100), nullable=False)
     help_type = Column(String(100), nullable=False)
+    small_description = Column(Text, nullable=False)
+    large_description = Column(Text, nullable=False)
     logo = Column(LargeBinary, nullable=True)  # BLOB for the logo image
 
     # Relationship to surgeries
@@ -33,7 +35,7 @@ class Surgery(Base):
 
     # Relationship to tier lists
     tier_lists = relationship("TierList", back_populates="surgery", cascade="all, delete")
-    
+
     # Relationship to partner
     partner = relationship("Partner", back_populates="surgeries")
 
@@ -71,10 +73,11 @@ class Customer(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     full_name = Column(String, nullable=False)
-    contact_email = Column(String, unique=True, nullable=False)
+    contact_email = Column(String, nullable=False)
     birthdate = Column(Date, nullable=False)
-    national_id_number = Column(String, nullable=True)
-    passport_number = Column(String, nullable=True)
+    national_id_number = Column(String, nullable=True, unique=True)
+    passport_number = Column(String, nullable=True, unique=True)
+    tin_number = Column(String, nullable=True, unique=True)
     country_of_origin = Column(String, nullable=False)
     denied_visa = Column(Boolean, nullable=False)
 
@@ -84,12 +87,12 @@ class Buy(Base):
     __tablename__ = 'buys'
 
     id = Column(Integer, primary_key=True, index=True)
-    
+
     # Foreign key references to the Customer, Surgery, and TierList tables
     customer_id = Column(Integer, ForeignKey('customers.id'), nullable=False)
     surgery_id = Column(Integer, ForeignKey('surgeries.id'), nullable=False)
     tier_list_id = Column(Integer, ForeignKey('tier_lists.id'), nullable=False)
-    
+
     # Adding a price field (assuming it's a float)
     price = Column(String, nullable=False)
 
